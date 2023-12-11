@@ -10,6 +10,7 @@
 #include <array>
 #include <charconv>
 #include <string_view>
+#include <sstream>
 
 
 class Application{
@@ -39,6 +40,7 @@ public:
 	void CLIvol(CommandPayload& payload);
 	void CLIchange(CommandPayload& payload);
 	void CLIfeed();
+	void PrintUpdate();
 
 	enum class State{
 		init,

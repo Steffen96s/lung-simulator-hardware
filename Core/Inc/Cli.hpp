@@ -32,7 +32,7 @@ public:
 	  }
 
 	void listen()  {
-		 m_uart << "<Enter command> " << m_application.m_printState() << '\n';
+		 m_uart << m_application.m_printState() << '\n';
 		 m_uart.receiveToIdleDMA(m_rxBuf, std::size(m_rxBuf));
 	}
 
@@ -43,7 +43,10 @@ public:
 		//don't change m_readBuf anymore!! treat it as const
 		std::string_view input {m_readBuf};
 		//'help macro' prints all available commands with their description
-		if(input == "help"){
+		if(input == "U") {
+			m_application.PrintUpdate();
+		    }
+		else if(input == "help"){
 			m_cmdFound = true;
 			m_uart << "Available commands:\n";
 			for(auto cmd: m_commands) {

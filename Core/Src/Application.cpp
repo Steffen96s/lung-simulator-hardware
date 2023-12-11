@@ -10,6 +10,7 @@
 #include <cstdlib>
 #include <algorithm>
 
+
 Application::Application(DMA_HandleTypeDef* dma, ADC_HandleTypeDef* adc,
 											TIM_HandleTypeDef* TIMhandle, UART_HandleTypeDef*  uart)
 	:m_pinout {}, m_adc {adc}, m_motor {m_pinout.m_dir, TIMhandle}, m_uart {uart, dma} {
@@ -232,15 +233,15 @@ void Application::loop() {
 std::string_view Application::m_printState() const {
 	switch(m_currentState){
 	case State::init:
-		return "(init)";
+		return "";
 	case State::menu:
-		return "(menu)";
+		return "";
 	case State::breathe:
-		return "(breathe)";
+		return "";
 	case State::stop:
-		return "(stop)";
+		return "";
 	default:
-		return "(unknown state)";
+		return "Testststs";
 	}
 }
 
@@ -371,6 +372,8 @@ void Application::CLIblink()  {
 
 void Application::CLIbreathe() {
 	m_currentState = State::breathe;
+	m_uart << "Der Lungensimulator wurde gestartet";
+
 }
 
 void Application::CLIselect(CommandPayload& payload) {
@@ -407,6 +410,7 @@ void Application::CLIselect(CommandPayload& payload) {
 void Application::CLIpause() {
 	m_motor.stop();
 	m_currentState = State::menu;
+	m_uart << "Der Lungensimulator wurde gestoppt";
 	//menu first entry = true;
 }
 
@@ -415,6 +419,9 @@ void Application::CLIfreq(CommandPayload& payload){
 	if(newFreq >= constants::MinimalFreq && newFreq <= constants::MaximalFreq){
 		m_requestedFreq = newFreq;
 		m_paramChange = true;
+		m_uart << "Atemfrequenz erfolgreich auf " << newFreq << "bpm geändert";
+
+
 	}
 	else{
 		m_uart << "Requested frequency out of range.\n";
@@ -428,7 +435,7 @@ void Application::CLIvol(CommandPayload& payload){
     std::from_chars(payload.begin(), payload.end(), newVol);
     if(newVol>=0 && newVol<=static_cast<int>(0.92*m_cylVolume)){
     	m_requestedVolume = newVol;
-    	m_uart << "Breath volume changed to " << newVol << '\n';
+    	m_uart << "Atemvolumen erfolgreich auf " << newVol << "ml geändert";
     	m_paramChange = true;
     }
     else{
@@ -453,3 +460,10 @@ void Application::CLIfeed() {
 
 //	m_uart.abortRx();
 }
+
+
+void Application::PrintUpdate() {
+	m_uart << "Jetzt gehts: " << m_requestedVolume;
+}
+
+
