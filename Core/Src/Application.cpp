@@ -158,6 +158,7 @@ void Application::loop() {
 						time = 1;
 						sample = 0;
 						++m_breathCounter;
+						m_uart << "BreathingCounter: " << m_breathCounter;
 						//if breathing parameters got changed by external command
 						if(m_paramChange){
 							//set requested freq from external command
@@ -241,7 +242,7 @@ std::string_view Application::m_printState() const {
 	case State::stop:
 		return "";
 	default:
-		return "Testststs";
+		return "";
 	}
 }
 
@@ -463,7 +464,8 @@ void Application::CLIfeed() {
 
 
 void Application::PrintUpdate() {
-	m_uart << "Jetzt gehts: " << m_requestedVolume;
+	m_uart << "Atemfrequenz: " << m_requestedFreq << "bpm\nAtemvolumen: " << m_requestedVolume << "ml";
+
 }
 
 

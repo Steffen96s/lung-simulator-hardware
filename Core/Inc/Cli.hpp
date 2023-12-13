@@ -70,7 +70,7 @@ public:
 			}
 		}
 		if(!m_cmdFound) {
-			m_uart << "Command not found.\n";
+			m_uart << "";
 		}
 		else {
 			m_cmdFound = false;
