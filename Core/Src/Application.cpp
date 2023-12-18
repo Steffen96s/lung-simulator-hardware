@@ -158,7 +158,7 @@ void Application::loop() {
 						time = 1;
 						sample = 0;
 						++m_breathCounter;
-						m_uart << "BreathingCounter: " << m_breathCounter;
+						m_uart << "Neuer Atemzug \n";
 						//if breathing parameters got changed by external command
 						if(m_paramChange){
 							//set requested freq from external command
