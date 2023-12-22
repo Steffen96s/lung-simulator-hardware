@@ -9,6 +9,7 @@
 #include <charconv>
 #include <cstdlib>
 #include <algorithm>
+#include <hypopnoe.hpp>
 
 
 Application::Application(DMA_HandleTypeDef* dma, ADC_HandleTypeDef* adc,
@@ -391,7 +392,7 @@ void Application::CLIselect(CommandPayload& payload) {
 			return;
 		case '1':
 			if(m_inpAvail){
-//					m_copyPattern(std::span(m_inputPattern.data.begin(), m_inputPattern.length));
+				m_copyPattern(std::span(m_inputPattern.data.begin(), m_inputPattern.length));
 				m_diffPattern = true;
 			}
 			else{
@@ -401,6 +402,8 @@ void Application::CLIselect(CommandPayload& payload) {
 		case '2':
 			m_copyPattern(pattern::sineSixV);
 			return;
+		case '3':
+			m_copyPattern(pattern::hypopnoe);
 		default:
 			m_uart << "Please enter a valid number\n";
 			break;
