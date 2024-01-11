@@ -160,6 +160,8 @@ void Application::loop() {
 						sample = 0;
 						++m_breathCounter;
 						m_uart << "Neuer Atemzug \n";
+						m_uart << "Atemfrequenz: " << m_requestedFreq << "\n";
+						m_uart << "Atemvolumen: " << m_requestedVolume << "\n";
 						//if breathing parameters got changed by external command
 						if(m_paramChange){
 							//set requested freq from external command
@@ -374,18 +376,11 @@ void Application::CLIblink()  {
 
 void Application::CLIbreathe() {
 	m_currentState = State::breathe;
-	m_uart << "Der Lungensimulator wurde gestartet";
+	m_uart << "Atmung wurde erfolgreich gestartet";
 
 }
 
 void Application::CLIselect(CommandPayload& payload) {
-	m_uart << "The following patterns are available:\n";
-	m_uart << "0: Abort\n";
-	if(m_inpAvail){
-			m_uart << "1: Input\n";
-	}
-	m_uart << "2: Sine6V\n";
-
 	switch(payload[0]) {
 		case '0':
 			m_uart << "Aborted\n";
@@ -401,6 +396,7 @@ void Application::CLIselect(CommandPayload& payload) {
 			break;
 		case '2':
 			m_copyPattern(pattern::sineSixV);
+			m_uart << "Atemmuster wurde erfolgreich auf Standard umgestellt";
 			return;
 		case '3':
 			m_copyPattern(pattern::hypopnoe);
@@ -408,13 +404,14 @@ void Application::CLIselect(CommandPayload& payload) {
 			m_uart << "Please enter a valid number\n";
 			break;
 	}
-	m_uart << "Successfully switched to  number " << static_cast<char>(payload[0]) << " with next breath.\n";
+	m_uart << "Die Atemmuster-Datei wird abgespielt. Um zum Standard-Atemmuster zurückzukehren, wenden Sie bitte das Standard-Atemmuster an. \n";
 }
 
 void Application::CLIpause() {
 	m_motor.stop();
 	m_currentState = State::menu;
-	m_uart << "Der Lungensimulator wurde gestoppt";
+	m_uart << "Atmung wurde erfolgreich gestoppt";
+
 	//menu first entry = true;
 }
 
@@ -458,7 +455,6 @@ void Application::CLIchange(CommandPayload& payload){
 }
 
 void Application::CLIfeed() {
-	m_uart << "Hungry now.\n";
 	m_uart.receiveDMA(index, 1);
 //	m_feed = true;
 
@@ -467,8 +463,9 @@ void Application::CLIfeed() {
 
 
 void Application::PrintUpdate() {
-	m_uart << "Atemfrequenz: " << m_requestedFreq << "bpm\nAtemvolumen: " << m_requestedVolume << "ml";
 
 }
+
+
 
 

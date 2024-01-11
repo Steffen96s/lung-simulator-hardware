@@ -500,7 +500,7 @@ extern "C" {
 			//feeding done
 			application.m_process = true;
 			application.index = application.patternInput.begin();
-			application.m_uart << "Feeding done.\n";
+			application.m_uart << "Die Datei wurde erfolgreich hochgeladen.\n";
 		}
 	}
 
