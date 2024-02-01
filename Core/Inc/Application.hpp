@@ -82,4 +82,5 @@ public:
 	uint8_t* index {patternInput.begin()};
 	bool m_inpAvail {false};
 	bool m_diffPattern {false};
+	bool m_standardPattern{false};
 };

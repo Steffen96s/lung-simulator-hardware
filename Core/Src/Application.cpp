@@ -177,6 +177,11 @@ void Application::loop() {
 							m_breathCounter = 0;
 							m_diffPattern = false;
 						}
+						if(m_standardPattern) {
+							m_copyPattern(pattern::sineSixV);
+							m_breathCounter = 0;
+							m_standardPattern = false;
+						}
 					}
 					else{
 						++time;
@@ -336,31 +341,31 @@ void Application::m_toggleTimerPin() {
 }
 
 void Application::m_copyPattern(std::span<const float> data){
-	auto minmax {std::minmax_element(data.begin(), data.end())};
-	auto newVol {static_cast<int>(*minmax.second - *minmax.first)};
-	if(newVol>=0 && newVol<=static_cast<int>(0.92*m_cylVolume)){
-		 m_breathingPattern.volume = newVol;
-	}
-	else{
-		 m_uart << "Requested volume out of range.\n";
-		 return;
-	 }
-	auto newFreq {6000.0/(data.size()-1)};
-	if(newFreq >= constants::MinimalFreq && newFreq <= constants::MaximalFreq){
-		m_breathingPattern.frequency = newFreq;
-	}
-	else{
-		m_uart << "Requested frequency out of range.\n";
-		return;
-	}
-	 std::copy(data.begin(), data.end(), m_breathingPattern.data.begin());
-	 m_breathingPattern.length = data.size();	//watch it!
-	 m_requestedFreq = m_breathingPattern.frequency;
-	 m_endTime = (data.size()-1)*10;
-	 m_requestedVolume = m_breathingPattern.volume;
-	 m_step = m_requestedFreq / m_breathingPattern.frequency;	  //could also just set it to 1.0
-	 m_volFactor = static_cast<float>(m_requestedVolume)/m_breathingPattern.volume; //could also just set it to 1.0
-	 ++newVol;
+		auto minmax {std::minmax_element(data.begin(), data.end())};
+		auto newVol {static_cast<int>(*minmax.second - *minmax.first)};
+		if(newVol>=0 && newVol<=static_cast<int>(0.92*m_cylVolume)){
+			 m_breathingPattern.volume = newVol;
+		}
+		else{
+			 m_uart << "Requested volume out of range.\n";
+			 return;
+		 }
+		auto newFreq {6000.0/(data.size()-1)};
+		if(newFreq >= constants::MinimalFreq && newFreq <= constants::MaximalFreq){
+			m_breathingPattern.frequency = newFreq;
+		}
+		else{
+			m_uart << "Requested frequency out of range.\n";
+			return;
+		}
+		 std::copy(data.begin(), data.end(), m_breathingPattern.data.begin());
+		 m_breathingPattern.length = data.size();	//watch it!
+		 m_requestedFreq = m_breathingPattern.frequency;
+		 m_endTime = (data.size()-1)*10;
+		 m_requestedVolume = m_breathingPattern.volume;
+		 m_step = m_requestedFreq / m_breathingPattern.frequency;	  //could also just set it to 1.0
+		 m_volFactor = static_cast<float>(m_requestedVolume)/m_breathingPattern.volume; //could also just set it to 1.0
+		 ++newVol;
 }
 
 void Application::CLIversion()  {
@@ -387,7 +392,7 @@ void Application::CLIselect(CommandPayload& payload) {
 			return;
 		case '1':
 			if(m_inpAvail){
-				m_copyPattern(std::span(m_inputPattern.data.begin(), m_inputPattern.length));
+				//m_copyPattern(std::span(m_inputPattern.data.begin(), m_inputPattern.length));
 				m_diffPattern = true;
 			}
 			else{
@@ -395,7 +400,8 @@ void Application::CLIselect(CommandPayload& payload) {
 			}
 			break;
 		case '2':
-			m_copyPattern(pattern::sineSixV);
+			//m_copyPattern(pattern::sineSixV);
+			m_standardPattern = true;
 			m_uart << "Atemmuster wurde erfolgreich auf Standard umgestellt";
 			return;
 		case '3':
